@@ -2,6 +2,7 @@ import BackgroundGlow from "@/components/BackgroundGlow";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DashboardPreview } from "@/components/DashboardPreview";
+import AnalyzeWidget from "@/components/AnalyzeWidget";
 import heroImg from "@/assets/finai-hero.jpg";
 import { BarChart3, LineChart as LineChartIcon, BellRing } from "lucide-react";
 
@@ -72,6 +73,10 @@ const Index = () => {
 
         <section id="preview" className="container py-8 md:py-14">
           <DashboardPreview />
+        </section>
+
+        <section id="analyze" className="container py-8 md:py-14 section-fade">
+          <AnalyzeWidget />
         </section>
       </main>
 
