@@ -1,106 +1,86 @@
-import React, { useState, useEffect } from "react";
-import AuthForm from "@/components/AuthForm";
-import FinancialDashboard from "@/components/FinancialDashboard";
-import TransactionForm from "@/components/TransactionForm";
-import CashFlowForm from "@/components/CashFlowForm";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { authAPI } from "@/lib/supabase";
+import BackgroundGlow from "@/components/BackgroundGlow";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { DashboardPreview } from "@/components/DashboardPreview";
+import heroImg from "@/assets/finai-hero.jpg";
+import { BarChart3, LineChart as LineChartIcon, BellRing } from "lucide-react";
 
 const Index = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check if user is already authenticated
-    const checkUser = async () => {
-      try {
-        const currentUser = await authAPI.getCurrentUser();
-        setUser(currentUser);
-      } catch (error) {
-        console.error('Error checking user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkUser();
-
-    // Listen for auth changes
-    const { data: { subscription } } = authAPI.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => subscription?.unsubscribe();
-  }, []);
-
-  const handleAuthSuccess = () => {
-    // User state will be updated by the auth state change listener
-  };
-
-  const handleSignOut = () => {
-    setUser(null);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <AuthForm onAuthSuccess={handleAuthSuccess} />;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <Tabs defaultValue="dashboard" className="w-full">
-        <div className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-          <div className="container mx-auto px-4">
-            <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto my-4">
-              <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-              <TabsTrigger value="transactions">Add Transaction</TabsTrigger>
-              <TabsTrigger value="cashflow">Cash Flow</TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <BackgroundGlow />
+      <header className="relative z-10">
+        <nav className="container flex items-center justify-between py-6">
+          <a href="#home" className="flex items-center gap-2 font-semibold">
+            <span>FinAI Advisor</span>
+          </a>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" asChild>
+              <a href="#features">Features</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="#preview">Live Preview</a>
+            </Button>
+            <Button variant="hero" asChild>
+              <a href="#get-started">Get Started</a>
+            </Button>
           </div>
+        </nav>
+      </header>
+
+      <main id="home" className="relative z-10">
+        <section className="container grid gap-10 md:grid-cols-2 items-center py-12 md:py-20">
+          <div className="space-y-6 section-fade">
+            <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+              AI Financial Analytics for SMEs
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-xl">
+              Centralize your bank, accounting, and payments data. Get real-time dashboards, anomaly alerts, and accurate forecasts to make faster decisions.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="hero" size="lg">Start Free Trial</Button>
+              <Button variant="outline" size="lg">Book a Demo</Button>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2"><LineChartIcon className="opacity-80" /> Forecasting</div>
+              <div className="flex items-center gap-2"><BarChart3 className="opacity-80" /> Insights</div>
+              <div className="flex items-center gap-2"><BellRing className="opacity-80" /> Alerts</div>
+            </div>
+          </div>
+
+          <div className="relative section-fade" aria-hidden>
+            <img src={heroImg} alt="FinAI Advisor dashboard hero with charts and analytics" loading="lazy" className="rounded-xl border shadow-soft w-full" />
+          </div>
+        </section>
+
+        <section id="features" className="container py-8 md:py-14 section-fade">
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="p-6 shadow-soft">
+              <h3 className="text-xl font-semibold mb-2">Expenditure Analysis</h3>
+              <p className="text-muted-foreground">AI categorizes spend and flags inefficiencies to help you stay on budget.</p>
+            </Card>
+            <Card className="p-6 shadow-soft">
+              <h3 className="text-xl font-semibold mb-2">Investments & Returns</h3>
+              <p className="text-muted-foreground">Track ROI, yields, and diversification with clear, actionable metrics.</p>
+            </Card>
+            <Card className="p-6 shadow-soft">
+              <h3 className="text-xl font-semibold mb-2">Anomaly Detection</h3>
+              <p className="text-muted-foreground">Automatic alerts for unusual spikes or dips with suggested root causes.</p>
+            </Card>
+          </div>
+        </section>
+
+        <section id="preview" className="container py-8 md:py-14">
+          <DashboardPreview />
+        </section>
+      </main>
+
+      <footer className="relative z-10 border-t">
+        <div className="container py-8 text-sm text-muted-foreground flex items-center justify-between">
+          <span>© {new Date().getFullYear()} FinAI Advisor</span>
+          <a href="#get-started" className="underline underline-offset-4">Get Started</a>
         </div>
-
-        <TabsContent value="dashboard" className="mt-0">
-          <FinancialDashboard onSignOut={handleSignOut} />
-        </TabsContent>
-
-        <TabsContent value="transactions" className="mt-0">
-          <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Add Financial Transaction</h1>
-                <p className="text-muted-foreground">Record your revenue and expenses</p>
-              </div>
-              <TransactionForm onTransactionAdded={() => {
-                // Optionally refresh data or show success message
-              }} />
-            </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="cashflow" className="mt-0">
-          <div className="container mx-auto px-4 py-8">
-            <div className="max-w-2xl mx-auto">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold">Manage Cash Flow</h1>
-                <p className="text-muted-foreground">Track cash inflows and outflows</p>
-              </div>
-              <CashFlowForm onCashFlowAdded={() => {
-                // Optionally refresh data or show success message
-              }} />
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+      </footer>
     </div>
   );
 };
